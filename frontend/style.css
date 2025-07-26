@@ -1,0 +1,74 @@
+/* style.css */
+
+body {
+    font-family: 'Inter', sans-serif;
+    /* overflow:hidden is removed to allow scrolling when content is long */
+}
+
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Places the canvas behind all other content */
+}
+
+.glass-card {
+    background: rgba(20, 20, 30, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* overflow:hidden is removed to allow content to flow */
+}
+
+/* Remove .glass-card.contracted animation styles */
+
+/* --- Animated Tab Styles --- */
+.tab-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 0.5rem 0;
+    font-weight: 600;
+    color: #a5b4fc; /* Indigo 300 */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.3s ease-in-out;
+    position: relative;
+}
+
+.tab-button.active {
+    color: white;
+}
+
+.tab-glider {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem; 
+    height: calc(100% - 0.5rem);
+    background-color: #4f46e5; /* Indigo 600 */
+    border-radius: 0.375rem;
+    transition: all 0.3s ease-in-out;
+    z-index: 5;
+}
+
+
+.file-input-label {
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.file-input-label:hover {
+    border-color: #4f46e5; /* Indigo 600 */
+    background-color: rgba(79, 70, 229, 0.1);
+}

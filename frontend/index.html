@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Obscura - Secure Steganography</title>
+    <meta name="description" content="A client-side tool to securely hide files and messages inside images, audio, and other files using advanced steganography and AES encryption.">
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <main class="relative flex items-center justify-center min-h-screen p-4">
+        <div class="glass-card w-full max-w-2xl rounded-2xl shadow-2xl p-8">
+            <header class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-indigo-400" style="font-family: 'Roboto Mono', monospace;">Data Obscura</h1>
+                <p class="text-indigo-200 mt-2">Hide your secrets in plain sight.</p>
+            </header>
+
+            <!-- Animated Tabs -->
+            <div class="tab-container relative flex justify-center mb-6 rounded-lg p-1 bg-black bg-opacity-20">
+                <div id="tab-glider" class="tab-glider"></div>
+                <button id="embed-tab-btn" class="tab-button active">Embed Data</button>
+                <button id="extract-tab-btn" class="tab-button">Extract Data</button>
+            </div>
+
+
+            <!-- Embed Section -->
+            <section id="embed-section">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block mb-2 font-semibold text-indigo-200">1. Choose Cover File</label>
+                        <label for="embed-cover-file" class="file-input-label flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer">
+                            <span id="embed-cover-file-name" class="text-gray-400">Click to upload Image, Audio, Video, etc.</span>
+                        </label>
+                        <input type="file" id="embed-cover-file" class="hidden">
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2 font-semibold text-indigo-200">2. Secret Data (File and/or Message)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label for="embed-secret-file" class="file-input-label flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer">
+                                <span id="embed-secret-file-name" class="text-gray-400 text-center">Upload Secret File (optional)</span>
+                            </label>
+                            <textarea id="embed-secret-text" rows="3" class="bg-gray-800 border border-gray-700 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Type a secret message (optional)..."></textarea>
+                        </div>
+                        <input type="file" id="embed-secret-file" class="hidden">
+                        <p class="text-xs text-gray-400 mt-2">You can embed both a file and a message together. Both will be extracted.</p>
+                    </div>
+
+                    <div>
+                        <label for="embed-password" class="block mb-2 font-semibold text-indigo-200">3. Set a Password</label>
+                        <div class="relative">
+                            <input type="password" id="embed-password" class="bg-gray-800 border border-gray-700 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none transition pr-12" placeholder="Your secret key">
+                            <button type="button" onclick="togglePasswordVisibility('embed-password', 'embed-toggleIcon')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-400 focus:outline-none">
+                                <i id="embed-toggleIcon" class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="embed-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 font-bold py-3 rounded-lg transition-all duration-300 shadow-lg">Embed Data</button>
+                </div>
+            </section>
+
+            <!-- Extract Section -->
+            <section id="extract-section" class="hidden">
+                 <div class="space-y-6">
+                    <div>
+                        <label class="block mb-2 font-semibold text-indigo-200">1. Choose Stego File</label>
+                        <label for="extract-stego-file" class="file-input-label flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer">
+                            <span id="extract-stego-file-name" class="text-gray-400">Click to upload the file with hidden data</span>
+                        </label>
+                        <input type="file" id="extract-stego-file" class="hidden">
+                    </div>
+                    
+                    <div>
+                        <label for="extract-password" class="block mb-2 font-semibold text-indigo-200">2. Enter Password</label>
+                        <div class="relative">
+                            <input type="password" id="extract-password" class="bg-gray-800 border border-gray-700 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none transition pr-12" placeholder="The secret key used for embedding">
+                            <button type="button" onclick="togglePasswordVisibility('extract-password', 'extract-toggleIcon')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-400 focus:outline-none">
+                                <i id="extract-toggleIcon" class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="extract-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 font-bold py-3 rounded-lg transition-all duration-300 shadow-lg">Extract Data</button>
+                </div>
+            </section>
+            
+            <!-- Status and Download Section -->
+            <div id="status-section" class="mt-8 text-center">
+                <p id="status-text" class="text-lg text-indigo-200 min-h-[1.5rem]"></p>
+                <div id="download-area" class="mt-4"></div>
+                <div id="extracted-text-area" class="mt-4 hidden">
+                    <h3 class="font-semibold text-indigo-200 mb-2">Extracted Message:</h3>
+                    <textarea id="extracted-text-output" readonly class="w-full h-32 bg-gray-900 border border-gray-700 rounded-lg p-3 font-mono"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
