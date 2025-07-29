@@ -230,3 +230,4 @@ def extract_data(stego_path: str, password: str) -> tuple[bytes, str, str] | tup
     except (IndexError, ValueError):
         # Error parsing payload, indicates corruption or wrong format
         return None, None, None
+# --- End of stego_core.py ---
